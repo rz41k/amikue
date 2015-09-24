@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class BaseCharacterController : MonoBehaviour {
-
+    
 	// === 外部パラメータ（インスペクタ表示） =====================
 	public Vector2			velocityMin				 = new Vector2(-100.0f,-100.0f);
 	public Vector2			velocityMax				 = new Vector2(+100.0f,+50.0f);
@@ -28,9 +28,12 @@ public class BaseCharacterController : MonoBehaviour {
 	protected Transform		groundCheck_L;
 	protected Transform 	groundCheck_C;
 	protected Transform 	groundCheck_R;
+    protected NameController nameController;
 
 	// === 内部パラメータ ======================================
-	protected float 	 	speedVx 			= 0.0f;
+	
+    /*
+    protected float 	 	speedVx 			= 0.0f;
 	protected float 		speedVxAddPower		= 0.0f;
 
 	protected GameObject	groundCheck_OnRoadObject;
@@ -55,20 +58,29 @@ public class BaseCharacterController : MonoBehaviour {
 
 	protected AudioSource[]	seAnimationList;
 
+    */
+
 	// === コード（Monobehaviour基本機能の実装） ================
+
+    
 	protected virtual void Awake () {
-		animator 			= GetComponent <Animator>();
-		groundCheck_L 		= transform.Find("GroundCheck_L");
+		//animator 			= GetComponent <Animator>();
+        nameController = new NameController();
+
+		groundCheck_L 		= transform.Find(nameControlle;
 		groundCheck_C 		= transform.Find("GroundCheck_C");
 		groundCheck_R 		= transform.Find("GroundCheck_R");
 		
+        /*
 		dir 				= (transform.localScale.x > 0.0f) ? 1 : -1;
 		basScaleX 			= transform.localScale.x * dir;
 		transform.localScale = new Vector3 (basScaleX, transform.localScale.y, transform.localScale.z);
 
 		activeSts 			= true;
 		gravityScale 		= GetComponent<Rigidbody2D>().gravityScale;
+         * /
 	}
+    /*
 
 	protected virtual void Start () {
 	}
@@ -291,4 +303,5 @@ public class BaseCharacterController : MonoBehaviour {
 		hpMax 		= _hpMax;
 		return (hp <= 0);
 	}
+     * */
 }

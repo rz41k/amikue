@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class PlayerController : BaseCharacterController {
-
+    /*
 	// === 外部パラメータ（インスペクタ表示） =====================
 						 public float 	initHpMax = 20.0f;
 	[Range(0.1f,100.0f)] public float 	initSpeed = 12.0f;
@@ -512,7 +512,7 @@ public class PlayerController : BaseCharacterController {
 		comboCount ++;
 		comboTimer += 1.0f;
 		hudCombo.text = string.Format("Combo {0}",comboCount);
-	}
+	}*/
 }
 
 

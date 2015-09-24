@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class PlayerMain : MonoBehaviour {
-
+    /*
 	// === 内部パラメータ ======================================
 	PlayerController 	playerCtrl;
 	zFoxVirtualPad 		vpad;
@@ -70,5 +70,5 @@ public class PlayerMain : MonoBehaviour {
 		} else {
 			actionEtcRun = true;
 		}
-	}
+	}*/
 }

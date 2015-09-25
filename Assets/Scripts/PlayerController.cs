@@ -2,11 +2,13 @@
 using System.Collections;
 
 public class PlayerController : BaseCharacterController {
-    /*
+    
 	// === 外部パラメータ（インスペクタ表示） =====================
 						 public float 	initHpMax = 20.0f;
 	[Range(0.1f,100.0f)] public float 	initSpeed = 12.0f;
 
+
+    /*
 	// === 外部パラメータ ======================================
 	// セーブデータパラメータ
 	public static	float 		nowHpMax 				= 0;
@@ -52,17 +54,20 @@ public class PlayerController : BaseCharacterController {
 	TextMesh		hudScore;
 	TextMesh 		hudCombo;
 
+     * 
+     * */
 	// === 内部パラメータ ======================================
 	int 			jumpCount			= 0;
 
-	volatile bool 	atkInputEnabled		= false;
-	volatile bool	atkInputNow			= false;
+//	volatile bool 	atkInputEnabled		= false;
+//	volatile bool	atkInputNow			= false;
 
 	bool			breakEnabled		= true;
 	float 			groundFriction		= 0.0f;
 
-	float 			comboTimer 			= 0.0f;
+//	float 			comboTimer 			= 0.0f;
 	
+    /*
 
 	// === コード（サポート関数） ===============================
 	public static GameObject GetGameObject() {
@@ -78,10 +83,15 @@ public class PlayerController : BaseCharacterController {
 		return GameObject.FindGameObjectWithTag ("Player").GetComponent<Animator>();
 	}
 
+     * */
 	// === コード（Monobehaviour基本機能の実装） ================
 	protected override void Awake () {
 		base.Awake ();
+        speed = initSpeed;
+        SetHP(initHpMax, initHpMax);
 
+
+        /*
 		#if xxx
 		Debug.Log (">>> ANISTS_Idle : " + ANISTS_Idle);
 		Debug.Log (">>> ANISTS_Walk : " + ANISTS_Walk);
@@ -168,6 +178,7 @@ public class PlayerController : BaseCharacterController {
 		hud.Find("Stage_Item_Key_A").GetComponent<SpriteRenderer>().enabled = itemKeyA;
 		hud.Find("Stage_Item_Key_B").GetComponent<SpriteRenderer>().enabled = itemKeyB;
 		hud.Find("Stage_Item_Key_C").GetComponent<SpriteRenderer>().enabled = itemKeyC;
+        */
 	}
 
 	protected override void Start() {
@@ -230,17 +241,17 @@ public class PlayerController : BaseCharacterController {
 				animator.SetTrigger ("Idle");
 				jumped 	  = false;
 				jumpCount = 0;
-				rigidbody2D.gravityScale = gravityScale;
+				GetComponent<Rigidbody2D>().gravityScale = gravityScale;
 			}
 			if (Time.fixedTime > jumpStartTime + 1.0f) {
 				if (stateInfo.nameHash == ANISTS_Idle || stateInfo.nameHash == ANISTS_Walk || 
 				    stateInfo.nameHash == ANISTS_Run  || stateInfo.nameHash == ANISTS_Jump) {
-					rigidbody2D.gravityScale = gravityScale;
+					GetComponent<Rigidbody2D>().gravityScale = gravityScale;
 				}
 			}
 		} else {
 			jumpCount = 0;
-			rigidbody2D.gravityScale = gravityScale;
+			GetComponent<Rigidbody2D>().gravityScale = gravityScale;
 		}
 
 		// 攻撃中か？
@@ -328,13 +339,13 @@ public class PlayerController : BaseCharacterController {
 	public void ActionJump() {
 		AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 		if (stateInfo.nameHash == ANISTS_Idle || stateInfo.nameHash == ANISTS_Walk || stateInfo.nameHash == ANISTS_Run || 
-		    (stateInfo.nameHash == ANISTS_Jump && rigidbody2D.gravityScale >= gravityScale)) {
+		    (stateInfo.nameHash == ANISTS_Jump && GetComponent<Rigidbody2D>().gravityScale >= gravityScale)) {
 			switch(jumpCount) {
 			case 0 :
 				if (grounded) {
 					animator.SetTrigger ("Jump");
 					//rigidbody2D.AddForce (new Vector2 (0.0f, 1500.0f));	// Bug
-					rigidbody2D.velocity = Vector2.up * 30.0f;
+					GetComponent<Rigidbody2D>().velocity = Vector2.up * 30.0f;
 					jumpStartTime = Time.fixedTime;
 					jumped = true;
 					jumpCount ++;
@@ -343,7 +354,7 @@ public class PlayerController : BaseCharacterController {
 			case 1 :
 				if (!grounded) {
 					animator.Play("Player_Jump",0,0.0f);
-					rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,20.0f);
+					GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x,20.0f);
 					jumped = true;
 					jumpCount ++;
 				}
@@ -362,8 +373,8 @@ public class PlayerController : BaseCharacterController {
 
 			animator.SetTrigger ("Attack_A");
 			if (stateInfo.nameHash == ANISTS_Jump || stateInfo.nameHash == ANISTS_ATTACK_C) {
-				rigidbody2D.velocity     = new Vector2(0.0f,0.0f);
-				rigidbody2D.gravityScale = 0.1f;
+				GetComponent<Rigidbody2D>().velocity     = new Vector2(0.0f,0.0f);
+				GetComponent<Rigidbody2D>().gravityScale = 0.1f;
 			}
 		} else {
 			if (atkInputEnabled) {
@@ -436,7 +447,7 @@ public class PlayerController : BaseCharacterController {
 
 		animator.SetTrigger ("DMG_A");
 		speedVx = 0;
-		rigidbody2D.gravityScale = gravityScale;
+		GetComponent<Rigidbody2D>().gravityScale = gravityScale;
 
 		// Combo Reset
 		comboCount = 0;
@@ -512,7 +523,7 @@ public class PlayerController : BaseCharacterController {
 		comboCount ++;
 		comboTimer += 1.0f;
 		hudCombo.text = string.Format("Combo {0}",comboCount);
-	}*/
+	}
 }
 
 

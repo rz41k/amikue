@@ -6,9 +6,9 @@ public class BaseCharacterController : MonoBehaviour {
 	// === 外部パラメータ（インスペクタ表示） =====================
 	public Vector2			velocityMin				 = new Vector2(-100.0f,-100.0f);
 	public Vector2			velocityMax				 = new Vector2(+100.0f,+50.0f);
-	public bool				superArmor				 = false;
-	public bool				superArmor_jumpAttackDmg = true;
-	public GameObject[] 	fireObjectList;
+//	public bool				superArmor				 = false;
+//	public bool				superArmor_jumpAttackDmg = true;
+//	public GameObject[] 	fireObjectList;
 
 	// === 外部パラメータ ======================================
 	[System.NonSerialized] public float		hpMax			= 10.0f;
@@ -28,11 +28,11 @@ public class BaseCharacterController : MonoBehaviour {
 	protected Transform		groundCheck_L;
 	protected Transform 	groundCheck_C;
 	protected Transform 	groundCheck_R;
-    protected NameController nameController;
+  
 
 	// === 内部パラメータ ======================================
 	
-    /*
+   
     protected float 	 	speedVx 			= 0.0f;
 	protected float 		speedVxAddPower		= 0.0f;
 
@@ -44,7 +44,9 @@ public class BaseCharacterController : MonoBehaviour {
 
 	protected float 		gravityScale 		= 10.0f;
 
-	protected bool			addForceVxEnabled	= false;
+
+    /*
+    protected bool			addForceVxEnabled	= false;
 	protected float			addForceVxStartTime = 0.0f;
 
 	protected bool			addVelocityEnabled	= false;
@@ -65,22 +67,21 @@ public class BaseCharacterController : MonoBehaviour {
     
 	protected virtual void Awake () {
 		//animator 			= GetComponent <Animator>();
-        nameController = new NameController();
 
-		groundCheck_L 		= transform.Find(nameControlle;
-		groundCheck_C 		= transform.Find("GroundCheck_C");
-		groundCheck_R 		= transform.Find("GroundCheck_R");
+        groundCheck_L = transform.Find(NameManager.GroundCheck.GroundCheck_L.ToString());
+		groundCheck_C = transform.Find(NameManager.GroundCheck.GroundCheck_C.ToString());
+		groundCheck_R = transform.Find(NameManager.GroundCheck.GroundCheck_R.ToString());
 		
-        /*
+        
 		dir 				= (transform.localScale.x > 0.0f) ? 1 : -1;
 		basScaleX 			= transform.localScale.x * dir;
 		transform.localScale = new Vector3 (basScaleX, transform.localScale.y, transform.localScale.z);
 
 		activeSts 			= true;
 		gravityScale 		= GetComponent<Rigidbody2D>().gravityScale;
-         * /
+         
 	}
-    /*
+    
 
 	protected virtual void Start () {
 	}
@@ -103,17 +104,17 @@ public class BaseCharacterController : MonoBehaviour {
 		groundCheck_OnMoveObject  = null;
 		groundCheck_OnEnemyObject = null;
 
-		Collider2D[][] groundCheckCollider = new Collider2D[3][];
-		groundCheckCollider [0] = Physics2D.OverlapPointAll (groundCheck_L.position);
-		groundCheckCollider [1] = Physics2D.OverlapPointAll (groundCheck_C.position);
-		groundCheckCollider [2] = Physics2D.OverlapPointAll (groundCheck_R.position);
+		Collider[][] groundCheckCollider = new Collider[3][];
+		groundCheckCollider [0] = Physics.OverlapSphere(groundCheck_L.position,0.1f);
+		groundCheckCollider [1] = Physics.OverlapSphere(groundCheck_C.position,0.1f);
+		groundCheckCollider [2] = Physics.OverlapSphere(groundCheck_R.position,0.1f);
 
-		foreach(Collider2D[] groundCheckList in groundCheckCollider) {
-			foreach(Collider2D groundCheck in groundCheckList) {
+		foreach(Collider[] groundCheckList in groundCheckCollider) {
+			foreach(Collider groundCheck in groundCheckList) {
 				if (groundCheck != null) {
 					if (!groundCheck.isTrigger) {
 						grounded = true;
-						if (groundCheck.tag == "Road") {
+						if (groundCheck.tag == TagName.Untagged) {
 							groundCheck_OnRoadObject = groundCheck.gameObject;
 						} else 
 						if (groundCheck.tag == "MoveObject") {
@@ -131,6 +132,7 @@ public class BaseCharacterController : MonoBehaviour {
 		//Debug.Log(string.Format("ChrCom FixedUpdate {0} {1}",name,grounded));
 		FixedUpdateCharacter (); 
 
+        /*
 		// 乗り物チェック
 		if (grounded) {
 			speedVxAddPower = 0.0f;
@@ -139,7 +141,9 @@ public class BaseCharacterController : MonoBehaviour {
 				speedVxAddPower = rb2D.velocity.x;
 			}
 		}
+         * */
 
+        /*
 		// 移動計算
 		if (addForceVxEnabled) {
 			// 移動計算は物理演算にまかせる
@@ -172,17 +176,19 @@ public class BaseCharacterController : MonoBehaviour {
 		float vx = Mathf.Clamp (GetComponent<Rigidbody2D>().velocity.x, velocityMin.x, velocityMax.x);
 		float vy = Mathf.Clamp (GetComponent<Rigidbody2D>().velocity.y, velocityMin.y, velocityMax.y);
 		GetComponent<Rigidbody2D>().velocity = new Vector2(vx,vy);
-	}
-
+	
+        */
+    }
 	protected virtual void FixedUpdateCharacter () {	
 	}
 
+    /*
 	// === コード（アニメーションイベント用コード） ===============
 	public virtual void AddForceAnimatorVx(float vx) {
 		//Debug.Log (string.Format("--- AddForceAnimatorVx {0} ----------------",vx));
 		if (vx != 0.0f) {
-			GetComponent<Rigidbody2D>().AddForce (new Vector2(vx * dir,0.0f));
-			addForceVxEnabled	= true;
+			GetComponent<Rigidbody>().AddForce (new Vector3(vx * dir,0.0f,0.0f));
+		addForceVxEnabled	= true;
 			addForceVxStartTime = Time.fixedTime;
 		}
 	}
@@ -247,19 +253,22 @@ public class BaseCharacterController : MonoBehaviour {
 		//Debug.Log (string.Format("--- PlayAnimationSE {0} ----------------",i));
 		seAnimationList [i].Play ();
 	}
+     * 
+     * */
 
 	// === コード（基本アクション） =============================
 	public virtual void ActionMove(float n) {
 		if (n != 0.0f) {
 			dir 	= Mathf.Sign(n);
 			speedVx = speed * n;
-			animator.SetTrigger("Run");
+			//animator.SetTrigger("Run");
 		} else {
 			speedVx = 0;
-			animator.SetTrigger("Idle");
+			//animator.SetTrigger("Idle");
 		}
 	}
 
+    /*
 	public void ActionFire() {
 		Transform goFire = transform.Find ("Muzzle");
 		foreach(GameObject fireObject in fireObjectList) {
@@ -291,10 +300,12 @@ public class BaseCharacterController : MonoBehaviour {
 		}
 		return false;
 	}
+     * 
+     * */
 
 	// === コード（その他） ====================================
 	public virtual void Dead (bool gameOver) {
-		animator.SetTrigger ("Dead");
+	//	animator.SetTrigger ("Dead");
 		activeSts = false;
 	}
 
@@ -303,5 +314,5 @@ public class BaseCharacterController : MonoBehaviour {
 		hpMax 		= _hpMax;
 		return (hp <= 0);
 	}
-     * */
+     
 }

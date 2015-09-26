@@ -7,6 +7,7 @@ public class NameManager{
         GroundCheck_L,
         GroundCheck_C,
         GroundCheck_R,
+        GroundChecks,
     }
 
 }

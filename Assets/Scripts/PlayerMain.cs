@@ -30,13 +30,13 @@ public class PlayerMain : MonoBehaviour {
 		
 		playerCtrl.ActionMove (joyMv);
 
-
+        
 		// ジャンプ
-		if (Input.GetButtonDown ("Jump") || vpad_btnA == zFOXVPAD_BUTTON.DOWN) {
+		if (Input.GetButtonDown ("Jump")) {
 			playerCtrl.ActionJump ();
 			return;
 		}
-
+        
 	
 	}
 }

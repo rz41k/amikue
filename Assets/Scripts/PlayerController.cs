@@ -2,10 +2,10 @@
 using System.Collections;
 
 public class PlayerController : BaseCharacterController {
-    
-	// === 外部パラメータ（インスペクタ表示） =====================
-						 public float 	initHpMax = 20.0f;
-	[Range(0.1f,100.0f)] public float 	initSpeed = 12.0f;
+
+    // === 外部パラメータ（インスペクタ表示） =====================
+    public float initHpMax = 20.0f;
+    [Range(0.1f, 100.0f)] public float initSpeed = 12.0f;
 
 
     /*
@@ -56,17 +56,17 @@ public class PlayerController : BaseCharacterController {
 
      * 
      * */
-	// === 内部パラメータ ======================================
-	int 			jumpCount			= 0;
+    // === 内部パラメータ ======================================
+    int jumpCount = 0;
 
-//	volatile bool 	atkInputEnabled		= false;
-//	volatile bool	atkInputNow			= false;
+    //	volatile bool 	atkInputEnabled		= false;
+    //	volatile bool	atkInputNow			= false;
 
-	bool			breakEnabled		= true;
-	float 			groundFriction		= 0.0f;
+    bool breakEnabled = true;
+    float groundFriction = 0.0f;
 
-//	float 			comboTimer 			= 0.0f;
-	
+    //	float 			comboTimer 			= 0.0f;
+
     /*
 
 	// === コード（サポート関数） ===============================
@@ -84,9 +84,9 @@ public class PlayerController : BaseCharacterController {
 	}
 
      * */
-	// === コード（Monobehaviour基本機能の実装） ================
-	protected override void Awake () {
-		base.Awake ();
+    // === コード（Monobehaviour基本機能の実装） ================
+    protected override void Awake() {
+        base.Awake();
         speed = initSpeed;
         SetHP(initHpMax, initHpMax);
 
@@ -179,8 +179,9 @@ public class PlayerController : BaseCharacterController {
 		hud.Find("Stage_Item_Key_B").GetComponent<SpriteRenderer>().enabled = itemKeyB;
 		hud.Find("Stage_Item_Key_C").GetComponent<SpriteRenderer>().enabled = itemKeyC;
         */
-	}
+    }
 
+    /*
 	protected override void Start() {
 		base.Start ();
 
@@ -216,6 +217,8 @@ public class PlayerController : BaseCharacterController {
 			hudCombo.transform.localScale = new Vector3(s,s,1.0f);
 		}
 
+    */
+
 #if xxx
 		// Debug
 		BoxCollider2D boxCol2D = GameObject.Find("Collider_EnemyActiveZone").GetComponent<BoxCollider2D>();
@@ -227,34 +230,36 @@ public class PlayerController : BaseCharacterController {
 				col2D.GetComponentInParent<EnemyMain>().cameraEnabled = true;
 			}
 		}
-#endif		
-	}
+#endif
+
 
 	protected override void FixedUpdateCharacter () {
 		// 現在のステートを取得
-		AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+		//AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
 		// 着地チェック
 		if (jumped) {
 			if ((grounded && !groundedPrev) || 
 				(grounded && Time.fixedTime > jumpStartTime + 1.0f)) {
-				animator.SetTrigger ("Idle");
+				//animator.SetTrigger ("Idle");
 				jumped 	  = false;
 				jumpCount = 0;
-				GetComponent<Rigidbody2D>().gravityScale = gravityScale;
+				//GetComponent<Rigidbody>().gravityScale = gravityScale;
 			}
+            /*
 			if (Time.fixedTime > jumpStartTime + 1.0f) {
 				if (stateInfo.nameHash == ANISTS_Idle || stateInfo.nameHash == ANISTS_Walk || 
 				    stateInfo.nameHash == ANISTS_Run  || stateInfo.nameHash == ANISTS_Jump) {
-					GetComponent<Rigidbody2D>().gravityScale = gravityScale;
+					//GetComponent<Rigidbody2D>().gravityScale = gravityScale;
 				}
-			}
+			}*/
 		} else {
 			jumpCount = 0;
-			GetComponent<Rigidbody2D>().gravityScale = gravityScale;
+			//GetComponent<Rigidbody2D>().gravityScale = gravityScale;
 		}
 
 		// 攻撃中か？
+        /*
 		if (stateInfo.nameHash == ANISTS_ATTACK_A || 
 		    stateInfo.nameHash == ANISTS_ATTACK_B || 
 		    stateInfo.nameHash == ANISTS_ATTACK_C || 
@@ -263,6 +268,7 @@ public class PlayerController : BaseCharacterController {
 			// 移動停止
 			speedVx = 0;
 		}
+        */
 
 #if xxx
 		// キャラの方向（攻撃中やジャンプ中に振り向き禁止にする）
@@ -293,6 +299,7 @@ public class PlayerController : BaseCharacterController {
 	}
 
 	// === コード（アニメーションイベント用コード） ===============
+    /*
 	public void EnebleAttackInput() {
 		atkInputEnabled = true;
 	}
@@ -303,7 +310,7 @@ public class PlayerController : BaseCharacterController {
 			animator.Play(name);
 		}
 	}
-
+    */
 	// === コード（基本アクション） =============================
 	public override void ActionMove(float n) {
 		if (!activeSts) {
@@ -316,7 +323,7 @@ public class PlayerController : BaseCharacterController {
 
 		// アニメーション指定
 		float moveSpeed = Mathf.Clamp(Mathf.Abs (n),-1.0f,+1.0f);
-		animator.SetFloat("MovSpeed",moveSpeed);
+		//animator.SetFloat("MovSpeed",moveSpeed);
 		//animator.speed = 1.0f + moveSpeed;
 
 		// 移動チェック
@@ -337,15 +344,15 @@ public class PlayerController : BaseCharacterController {
 	}
 
 	public void ActionJump() {
-		AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-		if (stateInfo.nameHash == ANISTS_Idle || stateInfo.nameHash == ANISTS_Walk || stateInfo.nameHash == ANISTS_Run || 
-		    (stateInfo.nameHash == ANISTS_Jump && GetComponent<Rigidbody2D>().gravityScale >= gravityScale)) {
+		//AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+		//if (stateInfo.nameHash == ANISTS_Idle || stateInfo.nameHash == ANISTS_Walk || stateInfo.nameHash == ANISTS_Run || 
+		//    (stateInfo.nameHash == ANISTS_Jump && GetComponent<Rigidbody2D>().gravityScale >= gravityScale)) {
 			switch(jumpCount) {
 			case 0 :
 				if (grounded) {
-					animator.SetTrigger ("Jump");
+					//animator.SetTrigger ("Jump");
 					//rigidbody2D.AddForce (new Vector2 (0.0f, 1500.0f));	// Bug
-					GetComponent<Rigidbody2D>().velocity = Vector2.up * 30.0f;
+					GetComponent<Rigidbody>().velocity = Vector2.up * 30.0f;
 					jumpStartTime = Time.fixedTime;
 					jumped = true;
 					jumpCount ++;
@@ -353,20 +360,20 @@ public class PlayerController : BaseCharacterController {
 				break;
 			case 1 :
 				if (!grounded) {
-					animator.Play("Player_Jump",0,0.0f);
-					GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x,20.0f);
+					//animator.Play("Player_Jump",0,0.0f);
+					GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x,20.0f,0f);
 					jumped = true;
 					jumpCount ++;
 				}
 				break;
-			}
+			//}
 			//Debug.Log(string.Format("Jump 1 {0} {1} {2} {3}",jumped,transform.position,grounded,groundedPrev));
 			//Debug.Log(groundCheckCollider[1].name);
-			AppSound.instance.SE_MOV_JUMP.Play ();
+			//AppSound.instance.SE_MOV_JUMP.Play ();
 		}
 	}
 
-	public void ActionAttack() {
+	/*public void ActionAttack() {
 		AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 		if (stateInfo.nameHash == ANISTS_Idle || stateInfo.nameHash == ANISTS_Walk || stateInfo.nameHash == ANISTS_Run || 
 		    stateInfo.nameHash == ANISTS_Jump || stateInfo.nameHash == ANISTS_ATTACK_C) {
@@ -524,6 +531,8 @@ public class PlayerController : BaseCharacterController {
 		comboTimer += 1.0f;
 		hudCombo.text = string.Format("Combo {0}",comboCount);
 	}
+    
+    */
 }
 
 

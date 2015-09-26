@@ -28,6 +28,7 @@ public class BaseCharacterController : MonoBehaviour {
 	protected Transform		groundCheck_L;
 	protected Transform 	groundCheck_C;
 	protected Transform 	groundCheck_R;
+    protected Transform groundChecks;
   
 
 	// === 内部パラメータ ======================================
@@ -42,7 +43,7 @@ public class BaseCharacterController : MonoBehaviour {
 
 	protected float			jumpStartTime		= 0.0f;
 
-	protected float 		gravityScale 		= 10.0f;
+	//protected float 		gravityScale 		= 10.0f;
 
 
     /*
@@ -66,11 +67,12 @@ public class BaseCharacterController : MonoBehaviour {
 
     
 	protected virtual void Awake () {
-		//animator 			= GetComponent <Animator>();
+        //animator 			= GetComponent <Animator>();
 
-        groundCheck_L = transform.Find(NameManager.GroundCheck.GroundCheck_L.ToString());
-		groundCheck_C = transform.Find(NameManager.GroundCheck.GroundCheck_C.ToString());
-		groundCheck_R = transform.Find(NameManager.GroundCheck.GroundCheck_R.ToString());
+        groundChecks = transform.Find(NameManager.GroundCheck.GroundChecks.ToString());
+        groundCheck_L = groundChecks.Find(NameManager.GroundCheck.GroundCheck_L.ToString());
+		groundCheck_C = groundChecks.Find(NameManager.GroundCheck.GroundCheck_C.ToString());
+		groundCheck_R = groundChecks.Find(NameManager.GroundCheck.GroundCheck_R.ToString());
 		
         
 		dir 				= (transform.localScale.x > 0.0f) ? 1 : -1;
@@ -78,7 +80,7 @@ public class BaseCharacterController : MonoBehaviour {
 		transform.localScale = new Vector3 (basScaleX, transform.localScale.y, transform.localScale.z);
 
 		activeSts 			= true;
-		gravityScale 		= GetComponent<Rigidbody2D>().gravityScale;
+		//gravityScale 		= GetComponent<Rigidbody2D>().gravityScale;
          
 	}
     
@@ -127,10 +129,13 @@ public class BaseCharacterController : MonoBehaviour {
 				}
 			}
 		}
+        //移動計算
+        GetComponent<Rigidbody>().velocity = new Vector3(speedVx, GetComponent<Rigidbody>().velocity.y, 0.0f);
 
-		// キャラ個別の処理を実行
-		//Debug.Log(string.Format("ChrCom FixedUpdate {0} {1}",name,grounded));
-		FixedUpdateCharacter (); 
+
+        // キャラ個別の処理を実行
+        //Debug.Log(string.Format("ChrCom FixedUpdate {0} {1}",name,grounded));
+        FixedUpdateCharacter (); 
 
         /*
 		// 乗り物チェック
@@ -171,13 +176,14 @@ public class BaseCharacterController : MonoBehaviour {
 			setVelocityVyEnabled = false;
 			GetComponent<Rigidbody2D>().velocity = new Vector2 (GetComponent<Rigidbody2D>().velocity.x,setVelocityVy);
 		}
+        */
 
 		// Veclocityの値をチェック
-		float vx = Mathf.Clamp (GetComponent<Rigidbody2D>().velocity.x, velocityMin.x, velocityMax.x);
-		float vy = Mathf.Clamp (GetComponent<Rigidbody2D>().velocity.y, velocityMin.y, velocityMax.y);
-		GetComponent<Rigidbody2D>().velocity = new Vector2(vx,vy);
+		float vx = Mathf.Clamp (GetComponent<Rigidbody>().velocity.x, velocityMin.x, velocityMax.x);
+		float vy = Mathf.Clamp (GetComponent<Rigidbody>().velocity.y, velocityMin.y, velocityMax.y);
+		GetComponent<Rigidbody>().velocity = new Vector3(vx,vy,0.0f);
 	
-        */
+        
     }
 	protected virtual void FixedUpdateCharacter () {	
 	}

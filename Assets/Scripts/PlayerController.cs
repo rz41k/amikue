@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#define DEBUG
+
+using UnityEngine;
 using System.Collections;
 
 public class PlayerController : BaseCharacterController {
@@ -64,7 +66,7 @@ public class PlayerController : BaseCharacterController {
 
     bool breakEnabled = true;
     float groundFriction = 0.0f;
-
+    float jumpVelocity = 8f;
     //	float 			comboTimer 			= 0.0f;
 
     /*
@@ -352,7 +354,7 @@ public class PlayerController : BaseCharacterController {
 				if (grounded) {
 					//animator.SetTrigger ("Jump");
 					//rigidbody2D.AddForce (new Vector2 (0.0f, 1500.0f));	// Bug
-					GetComponent<Rigidbody>().velocity = Vector2.up * 30.0f;
+					GetComponent<Rigidbody>().velocity = Vector2.up * jumpVelocity;
 					jumpStartTime = Time.fixedTime;
 					jumped = true;
 					jumpCount ++;
@@ -361,7 +363,7 @@ public class PlayerController : BaseCharacterController {
 			case 1 :
 				if (!grounded) {
 					//animator.Play("Player_Jump",0,0.0f);
-					GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x,20.0f,0f);
+					GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x,jumpVelocity,0f);
 					jumped = true;
 					jumpCount ++;
 				}
@@ -373,7 +375,7 @@ public class PlayerController : BaseCharacterController {
 		}
 	}
 
-	/*public void ActionAttack() {
+    /*public void ActionAttack() {
 		AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 		if (stateInfo.nameHash == ANISTS_Idle || stateInfo.nameHash == ANISTS_Walk || stateInfo.nameHash == ANISTS_Run || 
 		    stateInfo.nameHash == ANISTS_Jump || stateInfo.nameHash == ANISTS_ATTACK_C) {
@@ -533,6 +535,20 @@ public class PlayerController : BaseCharacterController {
 	}
     
     */
+
+    //-----------for debug----------
+#if DEBUG
+    void OnGUI()
+    {
+        GUI.Label(new Rect(10, 10, 100, 20), "jumpCount:"+jumpCount.ToString());
+        GUI.Label(new Rect(10, 30, 100, 20), "grounded:"+grounded.ToString());
+
+
+    }
+
+#endif
+
+
 }
 
 

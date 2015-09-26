@@ -115,14 +115,14 @@ public class BaseCharacterController : MonoBehaviour {
 			foreach(Collider groundCheck in groundCheckList) {
 				if (groundCheck != null) {
 					if (!groundCheck.isTrigger) {
-						grounded = true;
-						if (groundCheck.tag == TagName.Untagged) {
+						if (groundCheck.tag == TagName.Road) {
 							groundCheck_OnRoadObject = groundCheck.gameObject;
-						} else 
-						if (groundCheck.tag == "MoveObject") {
+                            grounded = true;
+                        } else 
+						if (groundCheck.tag == TagName.Others) {
 							groundCheck_OnMoveObject = groundCheck.gameObject;
 						} else 
-						if (groundCheck.tag == "EnemyObject") {
+						if (groundCheck.tag == TagName.Others) {
 							groundCheck_OnEnemyObject = groundCheck.gameObject;
 						}
 					}

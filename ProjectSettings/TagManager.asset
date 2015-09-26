@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Others
+  - PlayerBody
+  - PlayerArmBullet
+  - Road
   layers:
   - Default
   - TransparentFX

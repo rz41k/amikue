@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BaseCharacterController : MonoBehaviour {
     
@@ -11,9 +12,12 @@ public class BaseCharacterController : MonoBehaviour {
 //	public GameObject[] 	fireObjectList;
 
 	// === 外部パラメータ ======================================
-	[System.NonSerialized] public float		hpMax			= 10.0f;
-	[System.NonSerialized] public float		hp	 			= 10.0f;
-	[System.NonSerialized] public float		dir	 			= 1.0f;
+	[System.NonSerialized] public float		hpMax			= 100.0f;
+	[System.NonSerialized] public float		hp	 			= 100.0f;
+    [System.NonSerialized] public float mp = 100.0f;
+    [System.NonSerialized] public float mpMax = 100.0f;
+
+    [System.NonSerialized] public float		dir	 			= 1.0f;
 	[System.NonSerialized] public float		speed			= 6.0f;
 	[System.NonSerialized] public float 	basScaleX		= 1.0f;
 	[System.NonSerialized] public bool		activeSts 		= false;
@@ -62,6 +66,17 @@ public class BaseCharacterController : MonoBehaviour {
 	protected AudioSource[]	seAnimationList;
 
     */
+
+        // === mp管理用 ===================
+
+  
+  protected Dictionary<string, float> mpConsumeTable = new Dictionary<string, float>();
+   //mp消費量管理用テーブル
+   //Tkey: string 消費アクション名
+   //Tvalue: float mp消費量 
+
+
+
 
 	// === コード（Monobehaviour基本機能の実装） ================
 
@@ -320,5 +335,32 @@ public class BaseCharacterController : MonoBehaviour {
 		hpMax 		= _hpMax;
 		return (hp <= 0);
 	}
-     
+    public virtual bool SetMP(float _mp, float _mpMax)
+    {
+        mp = _mp;
+        mpMax = _mpMax;
+        return (mp <= 0);
+    }
+
+
+    //actionが発動できる状態ならtrueを返し、できなけらばfalseを返す
+    public virtual bool ConsumeMp(string mpUseAction)
+    {
+        if (!activeSts)
+        {
+            return false;
+        }
+
+        float mpConsumption = mpConsumeTable[mpUseAction];
+
+        if(mp-mpConsumption < 0)
+        {
+            return false;
+        }
+
+        mp -= mpConsumption;
+        return true;
+
+    }
+
 }

@@ -2,12 +2,16 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class PlayerController : BaseCharacterController {
+public class PlayerController : BaseCharacterController
+{
 
     // === 外部パラメータ（インスペクタ表示） =====================
-    public float initHpMax = 20.0f;
-    [Range(0.1f, 100.0f)] public float initSpeed = 12.0f;
+    public float initHpMax = 100f;
+    public float initMpMax = 100f;
+    [Range(0.1f, 100.0f)]
+    public float initSpeed = 12.0f;
 
 
     /*
@@ -69,6 +73,20 @@ public class PlayerController : BaseCharacterController {
     float jumpVelocity = 8f;
     //	float 			comboTimer 			= 0.0f;
 
+
+    //mp key管理用Enum
+    private enum mpConsumeTableKeys : long
+    {
+        SecondJump = 10,
+        Attack = 5
+
+    }
+
+
+
+
+
+
     /*
 
 	// === コード（サポート関数） ===============================
@@ -87,11 +105,27 @@ public class PlayerController : BaseCharacterController {
 
      * */
     // === コード（Monobehaviour基本機能の実装） ================
-    protected override void Awake() {
+    protected override void Awake()
+    {
         base.Awake();
         speed = initSpeed;
         SetHP(initHpMax, initHpMax);
+        SetMP(initMpMax, initMpMax);
+        //mpConsumeTableに要素の登録
+        foreach (mpConsumeTableKeys key in System.Enum.GetValues(typeof(mpConsumeTableKeys)))
+        {
+            mpConsumeTable.Add(System.Enum.GetName(typeof(mpConsumeTableKeys), key), (float)key);
+        }
 
+#if DEBUG
+        foreach (KeyValuePair<string, float> pair in mpConsumeTable)
+        {
+            Debug.Log(pair.Key + ":" + pair.Value + " in mpConsumeTable");
+
+        }
+
+
+#endif
 
         /*
 		#if xxx
@@ -235,19 +269,22 @@ public class PlayerController : BaseCharacterController {
 #endif
 
 
-	protected override void FixedUpdateCharacter () {
-		// 現在のステートを取得
-		//AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+    protected override void FixedUpdateCharacter()
+    {
+        // 現在のステートを取得
+        //AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
-		// 着地チェック
-		if (jumped) {
-			if ((grounded && !groundedPrev) || 
-				(grounded && Time.fixedTime > jumpStartTime + 1.0f)) {
-				//animator.SetTrigger ("Idle");
-				jumped 	  = false;
-				jumpCount = 0;
-				//GetComponent<Rigidbody>().gravityScale = gravityScale;
-			}
+        // 着地チェック
+        if (jumped)
+        {
+            if ((grounded && !groundedPrev) ||
+                (grounded && Time.fixedTime > jumpStartTime + 1.0f))
+            {
+                //animator.SetTrigger ("Idle");
+                jumped = false;
+                jumpCount = 0;
+                //GetComponent<Rigidbody>().gravityScale = gravityScale;
+            }
             /*
 			if (Time.fixedTime > jumpStartTime + 1.0f) {
 				if (stateInfo.nameHash == ANISTS_Idle || stateInfo.nameHash == ANISTS_Walk || 
@@ -255,12 +292,14 @@ public class PlayerController : BaseCharacterController {
 					//GetComponent<Rigidbody2D>().gravityScale = gravityScale;
 				}
 			}*/
-		} else {
-			jumpCount = 0;
-			//GetComponent<Rigidbody2D>().gravityScale = gravityScale;
-		}
+        }
+        else
+        {
+            jumpCount = 0;
+            //GetComponent<Rigidbody2D>().gravityScale = gravityScale;
+        }
 
-		// 攻撃中か？
+        // 攻撃中か？
         /*
 		if (stateInfo.nameHash == ANISTS_ATTACK_A || 
 		    stateInfo.nameHash == ANISTS_ATTACK_B || 
@@ -282,25 +321,28 @@ public class PlayerController : BaseCharacterController {
 			transform.localScale = new Vector3 (basScaleX * dir, transform.localScale.y, transform.localScale.z);
 		}
 #else
-		// キャラの方向
-		transform.localScale = new Vector3 (basScaleX * dir, transform.localScale.y, transform.localScale.z);
+        // キャラの方向
+        transform.localScale = new Vector3(basScaleX * dir, transform.localScale.y, transform.localScale.z);
 #endif
 
-		// ジャンプ中の横移動減速
-		if (jumped && !grounded && groundCheck_OnMoveObject == null) {
-			if (breakEnabled) {
-				breakEnabled = false;
-				speedVx *= 0.9f;
-			}
-		}
+        // ジャンプ中の横移動減速
+        if (jumped && !grounded && groundCheck_OnMoveObject == null)
+        {
+            if (breakEnabled)
+            {
+                breakEnabled = false;
+                speedVx *= 0.9f;
+            }
+        }
 
-		// 移動停止（減速）処理
-		if (breakEnabled) {
-			speedVx *= groundFriction;
-		}
-	}
+        // 移動停止（減速）処理
+        if (breakEnabled)
+        {
+            speedVx *= groundFriction;
+        }
+    }
 
-	// === コード（アニメーションイベント用コード） ===============
+    // === コード（アニメーションイベント用コード） ===============
     /*
 	public void EnebleAttackInput() {
 		atkInputEnabled = true;
@@ -313,67 +355,83 @@ public class PlayerController : BaseCharacterController {
 		}
 	}
     */
-	// === コード（基本アクション） =============================
-	public override void ActionMove(float n) {
-		if (!activeSts) {
-			return;
-		}
+    // === コード（基本アクション） =============================
+    public override void ActionMove(float n)
+    {
+        if (!activeSts)
+        {
+            return;
+        }
 
-		// 初期化
-		float dirOld = dir;
-		breakEnabled = false;
+        // 初期化
+        float dirOld = dir;
+        breakEnabled = false;
 
-		// アニメーション指定
-		float moveSpeed = Mathf.Clamp(Mathf.Abs (n),-1.0f,+1.0f);
-		//animator.SetFloat("MovSpeed",moveSpeed);
-		//animator.speed = 1.0f + moveSpeed;
+        // アニメーション指定
+        float moveSpeed = Mathf.Clamp(Mathf.Abs(n), -1.0f, +1.0f);
+        //animator.SetFloat("MovSpeed",moveSpeed);
+        //animator.speed = 1.0f + moveSpeed;
 
-		// 移動チェック
-		if (n != 0.0f) {
-			// 移動
-			dir 	  = Mathf.Sign(n);
-			moveSpeed = (moveSpeed < 0.5f) ? (moveSpeed * (1.0f / 0.5f)) : 1.0f;
-			speedVx   = initSpeed * moveSpeed * dir;
-		} else {
-			// 移動停止
-			breakEnabled = true;
-		}
+        // 移動チェック
+        if (n != 0.0f)
+        {
+            // 移動
+            dir = Mathf.Sign(n);
+            moveSpeed = (moveSpeed < 0.5f) ? (moveSpeed * (1.0f / 0.5f)) : 1.0f;
+            speedVx = initSpeed * moveSpeed * dir;
+        }
+        else
+        {
+            // 移動停止
+            breakEnabled = true;
+        }
 
-		// その場振り向きチェック
-		if (dirOld != dir) {
-			breakEnabled = true;
-		}
-	}
+        // その場振り向きチェック
+        if (dirOld != dir)
+        {
+            breakEnabled = true;
+        }
+    }
 
-	public void ActionJump() {
-		//AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-		//if (stateInfo.nameHash == ANISTS_Idle || stateInfo.nameHash == ANISTS_Walk || stateInfo.nameHash == ANISTS_Run || 
-		//    (stateInfo.nameHash == ANISTS_Jump && GetComponent<Rigidbody2D>().gravityScale >= gravityScale)) {
-			switch(jumpCount) {
-			case 0 :
-				if (grounded) {
-					//animator.SetTrigger ("Jump");
-					//rigidbody2D.AddForce (new Vector2 (0.0f, 1500.0f));	// Bug
-					GetComponent<Rigidbody>().velocity = Vector2.up * jumpVelocity;
-					jumpStartTime = Time.fixedTime;
-					jumped = true;
-					jumpCount ++;
-				}
-				break;
-			case 1 :
-				if (!grounded) {
-					//animator.Play("Player_Jump",0,0.0f);
-					GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x,jumpVelocity,0f);
-					jumped = true;
-					jumpCount ++;
-				}
-				break;
-			//}
-			//Debug.Log(string.Format("Jump 1 {0} {1} {2} {3}",jumped,transform.position,grounded,groundedPrev));
-			//Debug.Log(groundCheckCollider[1].name);
-			//AppSound.instance.SE_MOV_JUMP.Play ();
-		}
-	}
+    public void ActionJump()
+    {
+        //AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        //if (stateInfo.nameHash == ANISTS_Idle || stateInfo.nameHash == ANISTS_Walk || stateInfo.nameHash == ANISTS_Run || 
+        //    (stateInfo.nameHash == ANISTS_Jump && GetComponent<Rigidbody2D>().gravityScale >= gravityScale)) {
+        switch (jumpCount)
+        {
+            case 0:
+                if (grounded)
+                {
+                    //animator.SetTrigger ("Jump");
+                    //rigidbody2D.AddForce (new Vector2 (0.0f, 1500.0f));	// Bug
+                    GetComponent<Rigidbody>().velocity = Vector2.up * jumpVelocity;
+                    jumpStartTime = Time.fixedTime;
+                    jumped = true;
+                    jumpCount++;
+                }
+                break;
+            case 1:
+                if (!grounded)
+                {
+                    if (!ConsumeMp(mpConsumeTableKeys.SecondJump.ToString()))
+                    {
+                        return;
+                    }
+
+
+                    //animator.Play("Player_Jump",0,0.0f);
+                    GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, jumpVelocity, 0f);
+                    jumped = true;
+                    jumpCount++;
+                }
+                break;
+                //}
+                //Debug.Log(string.Format("Jump 1 {0} {1} {2} {3}",jumped,transform.position,grounded,groundedPrev));
+                //Debug.Log(groundCheckCollider[1].name);
+                //AppSound.instance.SE_MOV_JUMP.Play ();
+        }
+    }
 
     /*public void ActionAttack() {
 		AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
@@ -540,10 +598,10 @@ public class PlayerController : BaseCharacterController {
 #if DEBUG
     void OnGUI()
     {
-        GUI.Label(new Rect(10, 10, 100, 20), "jumpCount:"+jumpCount.ToString());
-        GUI.Label(new Rect(10, 30, 100, 20), "grounded:"+grounded.ToString());
-
-
+        GUI.Label(new Rect(10, 10, 100, 20), "jumpCount:" + jumpCount.ToString());
+        GUI.Label(new Rect(10, 30, 100, 20), "grounded:" + grounded.ToString());
+        GUI.Label(new Rect(10, 50, 100, 20), "HP: "+hp+"/"+hpMax);
+        GUI.Label(new Rect(10, 70, 100, 20), "MP: " + mp+"/"+mpMax);
     }
 
 #endif

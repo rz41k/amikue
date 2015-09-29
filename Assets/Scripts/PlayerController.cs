@@ -69,7 +69,7 @@ public class PlayerController : BaseCharacterController
     //	volatile bool	atkInputNow			= false;
 
     bool breakEnabled = true;
-    float groundFriction = 0.0f;
+    float groundFriction = 0f;
     float jumpVelocity = 8f;
     //	float 			comboTimer 			= 0.0f;
 
@@ -330,8 +330,8 @@ public class PlayerController : BaseCharacterController
         {
             if (breakEnabled)
             {
-                breakEnabled = false;
-                speedVx *= 0.9f;
+              // breakEnabled = false;
+                speedVx *= 0.999f;
             }
         }
 
@@ -372,6 +372,7 @@ public class PlayerController : BaseCharacterController
         //animator.SetFloat("MovSpeed",moveSpeed);
         //animator.speed = 1.0f + moveSpeed;
 
+        
         // 移動チェック
         if (n != 0.0f)
         {
@@ -391,6 +392,43 @@ public class PlayerController : BaseCharacterController
         {
             breakEnabled = true;
         }
+    }
+
+    public void ActionMove(float n, float raw) {
+        if (!activeSts) {
+            return;
+        }
+
+        // 初期化
+        float dirOld = dir;
+        breakEnabled = false;
+
+        // アニメーション指定
+        float moveSpeed = Mathf.Clamp(Mathf.Abs(n), -1.0f, +1.0f);
+        //animator.SetFloat("MovSpeed",moveSpeed);
+        //animator.speed = 1.0f + moveSpeed;
+
+        if(raw != 0){
+            dir = Mathf.Sign(raw);
+        }
+
+        // 移動チェック
+        if (n != 0.0f) {
+            // 移動
+            //dir = Mathf.Sign(n);
+            moveSpeed = (moveSpeed < 0.5f) ? (moveSpeed * (1.0f / 0.5f)) : 1.0f;
+            speedVx = initSpeed * moveSpeed * Mathf.Sign(n);
+        }
+        else {
+            // 移動停止
+            breakEnabled = true;
+        }
+
+        // その場振り向きチェック
+        if (dirOld != dir) {
+            breakEnabled = true;
+        }
+
     }
 
     public void ActionJump()
@@ -598,10 +636,12 @@ public class PlayerController : BaseCharacterController
 #if DEBUG
     void OnGUI()
     {
-        GUI.Label(new Rect(10, 10, 100, 20), "jumpCount:" + jumpCount.ToString());
-        GUI.Label(new Rect(10, 30, 100, 20), "grounded:" + grounded.ToString());
-        GUI.Label(new Rect(10, 50, 100, 20), "HP: "+hp+"/"+hpMax);
-        GUI.Label(new Rect(10, 70, 100, 20), "MP: " + mp+"/"+mpMax);
+        int i =-10;
+        GUI.Label(new Rect(10, i = i + 20, 100, 20), "FPS" + 1/Time.deltaTime);
+        GUI.Label(new Rect(10, i = i + 20, 100, 20), "jumpCount:" + jumpCount.ToString());
+        GUI.Label(new Rect(10, i = i + 20, 100, 20), "grounded:" + grounded.ToString());
+        GUI.Label(new Rect(10, i = i + 20, 100, 20), "HP: " + hp + "/" + hpMax);
+        GUI.Label(new Rect(10, i = i + 20, 100, 20), "MP: " + mp + "/" + mpMax);
     }
 
 #endif

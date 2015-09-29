@@ -6,7 +6,7 @@ public class GameController : MonoBehaviour {
 
     
 	// === 外部パラメータ（インスペクタ表示） =====================
-	
+    private GameObject playerObj;
 
 	// === 外部パラメータ ======================================
 	//[System.NonSerialized] public float		hpMax			= 10.0f;
@@ -19,8 +19,7 @@ public class GameController : MonoBehaviour {
 
 	// === キャッシュ ==========================================
 //	[System.NonSerialized] public Animator	animator;
-	
-
+    private PlayerController playerctrl;
 	// === 内部パラメータ ======================================
 
 
@@ -35,8 +34,11 @@ public class GameController : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
         //各nameを取得
-      
+        if (playerObj == null) {
+            playerObj =  GameObject.Find("Player");
+        }
 
+        playerctrl = playerObj.GetComponent<PlayerController>();
 	
 	}
 	

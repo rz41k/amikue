@@ -24,11 +24,12 @@ public class PlayerMain : MonoBehaviour {
 
 		// 移動
 		float joyMv = Input.GetAxis ("Horizontal");
+        float joyMvRaw = Input.GetAxisRaw("Horizontal");
 //		joyMv = Mathf.Pow(Mathf.Abs(joyMv),3.0f) * Mathf.Sign(joyMv);
 
 		
 		
-		playerCtrl.ActionMove (joyMv);
+		playerCtrl.ActionMove(joyMv,joyMvRaw);
 
         
 		// ジャンプ

@@ -4,13 +4,19 @@ using System.Collections;
 public class PlayerMain : MonoBehaviour {
     
 	// === 内部パラメータ ======================================
-	PlayerController 	playerCtrl;
+	
 	
 	bool 				actionEtcRun = true;
+
+    //=== キャッシュ====
+    PlayerController 	playerCtrl;
+    FireBullet fireBullet;
 
 	// === コード（Monobehaviour基本機能の実装） ================
 	void Awake () {
 		playerCtrl 		= GetComponent<PlayerController>();
+        fireBullet = transform.Find(NameManager.Bullet.StartingPointOfBullet.ToString())
+            .GetComponent<FireBullet>();
 	
 	}
 
@@ -37,6 +43,10 @@ public class PlayerMain : MonoBehaviour {
 			playerCtrl.ActionJump ();
 			return;
 		}
+
+        if (Input.GetButtonDown("Fire1")) {
+            fireBullet.Fire();
+        }
         
 	
 	}

@@ -145,8 +145,9 @@ public class BaseCharacterController : MonoBehaviour {
 			}
 		}
         //移動計算
-        GetComponent<Rigidbody>().velocity = new Vector3(speedVx, GetComponent<Rigidbody>().velocity.y, 0.0f);
-
+        if (activeSts) {
+            GetComponent<Rigidbody>().velocity = new Vector3(speedVx, GetComponent<Rigidbody>().velocity.y, 0.0f);
+        }
 
         // キャラ個別の処理を実行
         //Debug.Log(string.Format("ChrCom FixedUpdate {0} {1}",name,grounded));
@@ -289,6 +290,32 @@ public class BaseCharacterController : MonoBehaviour {
 		}
 	}
 
+
+    public virtual void ActionDamage(float damage) {
+        // Debug:無敵モード
+        //if (SaveData.debug_Invicible) {
+        //	return;
+        //}
+        // ダメージ処理をしてもいいか？
+        if (!activeSts) {
+            return;
+        }
+
+
+
+        //animator.SetTrigger ("DMG_A");
+        //speedVx = 0;
+        //GetComponent<Rigidbody2D>().gravityScale = gravityScale;
+
+
+
+
+        if (SetHP(hp - damage, hpMax)) {
+            Dead(true); // 死亡
+        }
+    }
+
+
     /*
 	public void ActionFire() {
 		Transform goFire = transform.Find ("Muzzle");
@@ -333,6 +360,8 @@ public class BaseCharacterController : MonoBehaviour {
 	public virtual bool SetHP(float _hp,float _hpMax) {
 		hp 	  		= _hp;
 		hpMax 		= _hpMax;
+
+        if (hp < 0) hp = 0;
 		return (hp <= 0);
 	}
     public virtual bool SetMP(float _mp, float _mpMax)
@@ -362,5 +391,8 @@ public class BaseCharacterController : MonoBehaviour {
         return true;
 
     }
+
+    //--------tools----------------
+   
 
 }

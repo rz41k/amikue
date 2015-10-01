@@ -231,10 +231,13 @@ public class PlayerController : BaseCharacterController
 		seAnimationList [3] = AppSound.instance.SE_ATK_ARIAL;
 		seAnimationList [4] = AppSound.instance.SE_MOV_JUMP;
 	}
+    */
+    protected override void Update() {
+        base.Update();
+        Camera.main.transform.position = new Vector3(transform.position.x, 0, 0)
+            + new Vector3(0, 0, -15); 
 
-	protected override void Update () {
-		base.Update ();
-
+        /*
 		// ステータス表示
 		hudHpBar.SetPosition (1, new Vector3 (5.0f * (hp / hpMax), 0.0f, 0.0f));
 		hudScore.text = string.Format("Score {0}",score);
@@ -252,9 +255,8 @@ public class PlayerController : BaseCharacterController
 			hudCombo.gameObject.SetActive(true);
 			hudCombo.transform.localScale = new Vector3(s,s,1.0f);
 		}
-
-    */
-
+        */
+    }
 #if xxx
 		// Debug
 		BoxCollider2D boxCol2D = GameObject.Find("Collider_EnemyActiveZone").GetComponent<BoxCollider2D>();
@@ -340,6 +342,9 @@ public class PlayerController : BaseCharacterController
         {
             speedVx *= groundFriction;
         }
+
+        //カメラ
+
     }
 
     // === コード（アニメーションイベント用コード） ===============
@@ -523,50 +528,11 @@ public class PlayerController : BaseCharacterController
 			}
 		}
 	}
+    */
+	
 
-	public void ActionDamage(float damage) {
-		// Debug:無敵モード
-		if (SaveData.debug_Invicible) {
-			return;
-		}
-		// ダメージ処理をしてもいいか？
-		if (!activeSts) {
-			return;
-		}
 
-#if xxx
-		// ランダムにヒット音を再生
-		switch(Random.Range(0,3)) {
-		case 0 : AppSound.instance.SE_HIT_A1.Play (); break;
-		case 1 : AppSound.instance.SE_HIT_A2.Play (); break;
-		case 2 : AppSound.instance.SE_HIT_A3.Play (); break;
-		}
-#else
-		// ヒット音を再生
-		AppSound.instance.SE_HIT_A1.Play ();
-#endif
-
-#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID)
-		Handheld.Vibrate();
-#endif
-
-		animator.SetTrigger ("DMG_A");
-		speedVx = 0;
-		GetComponent<Rigidbody2D>().gravityScale = gravityScale;
-
-		// Combo Reset
-		comboCount = 0;
-		comboTimer = 0.0f;
-
-		if (jumped) {
-			damage *= 1.5f;
-		}
-
-		if (SetHP(hp - damage,hpMax)) {
-			Dead(true); // 死亡
-		}
-	}
-
+    /*
 	// === コード（その他） ====================================
 	public override void Dead(bool gameOver) {
 		// 死亡処理をしてもいいか？

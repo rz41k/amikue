@@ -14,4 +14,5 @@ public static class TagName
 	public const string PlayerBody = "PlayerBody";
 	public const string PlayerArmBullet = "PlayerArmBullet";
 	public const string Road = "Road";
+	public const string Enemy = "Enemy";
 }

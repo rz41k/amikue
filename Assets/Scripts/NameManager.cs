@@ -10,4 +10,8 @@ public class NameManager{
         GroundChecks,
     }
 
+    public enum Bullet {
+        StartingPointOfBullet,
+    }
+
 }

@@ -8,6 +8,7 @@ TagManager:
   - PlayerBody
   - PlayerArmBullet
   - Road
+  - Enemy
   layers:
   - Default
   - TransparentFX

@@ -34,7 +34,7 @@ public class BaseBullet : MonoBehaviour
     void OnTriggerEnter(Collider other) {
         Debug.Log("Ontirigerenter");
         if (other.tag == TagName.Enemy) {
-            other.GetComponent<EnemyController>().ActionDamage(damage);
+            other.GetComponent<BaseCharacterController>().ActionDamage(damage);
             Destroy(gameObject);
 
         }
